@@ -1,0 +1,33 @@
+# Codebase Analysis: Fish Identifier App
+
+## Overview
+This codebase is a Flutter application designed for AI-powered fish identification and measurement. It uses an edge-based machine learning pipeline via TensorFlow Lite and augmented reality for physical measurements.
+
+## Architecture
+The application follows **Clean Architecture** combined with feature-based routing.
+- **Top-level features**: `detection`, `ar_measurement`, and `image_measurement`.
+- Each feature is broken down into [data](file:///Users/suryanshsingh/workspace/fish%20identifier%20/fish_identifier/.metadata), `domain`, and `presentation` layers.
+- **State Management**: `flutter_bloc` is used throughout the presentation layer to separate business logic from UI.
+- **Dependency Injection**: `get_it` handles DI (configured in [lib/config/di/injection.dart](file:///Users/suryanshsingh/workspace/fish%20identifier%20/fish_identifier/lib/config/di/injection.dart)).
+
+## Key Modules
+
+### 1. ML Detection Module (`lib/features/detection`)
+- **TFLite Integration**: The app uses `tflite_flutter` to run on-device inference. Specifically, it uses a YOLOv8 model.
+- **Implementation**: The `TFLiteDetectionService` (`lib/features/detection/data/datasources/tflite_detection_service.dart`) handles the model lifecycle and inference. It runs input images through the YOLOv8 model, processes transposed outputs (either `[1, 84, 8400]` or `[1, 8400, 84]`), extracts bounding boxes, confidence scores, and applies Non-Maximum Suppression (NMS) to filter the results.
+- **Additional Models**: The app contains traces of `freshness_service.dart` and `inception_service.dart`, indicating possibilities to evaluate fish freshness or perform more generic classifications.
+
+### 2. AR Measurement Module (`lib/features/ar_measurement`)
+- **Technology**: Utilizes `ar_flutter_plugin_updated` to track physical planes and perform hit testing.
+- **Implementation**: `ARMeasurePage` instructs the user to tap to place a "start point" and an "end point" on an AR plane. It calculates the physical Euclidean distance between the two AR anchors.
+- **Weight Estimation**: After measuring the length (cm), it calls `CalculateWeight()` a domain usecase that likely estimates the weight of the fish based on length and species data.
+
+## Important Dependencies
+- `tflite_flutter` (v0.11.0): Core ML inference.
+- `opencv_dart` (v1.0.0): Fast native image processing if needed for the ML pipeline.
+- `ar_flutter_plugin_updated`: AR plane detection and spatial node mapping.
+- `flutter_bloc` / `get_it`: App architecture standard implementations.
+- `google_fonts`: Standardized typography.
+
+## Conclusion
+The application is robustly organized with a clear separation of concerns. It handles highly complex on-device computation (YOLO rendering and custom NMS parsing) and sensor interaction (AR plane detection) without relying on backend servers for its core functionality.
