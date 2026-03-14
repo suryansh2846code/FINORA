@@ -1,0 +1,27 @@
+description: Ultralytics best model trained on /content/aquarium-2/data.yaml
+author: Ultralytics
+date: '2025-11-22T15:54:52.308823'
+version: 8.3.230
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: fish
+  1: jellyfish
+  2: penguin
+  3: puffin
+  4: shark
+  5: starfish
+  6: stingray
+args:
+  batch: 1
+  fraction: 1.0
+  half: false
+  int8: true
+  nms: false
+channels: 3
